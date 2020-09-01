@@ -28,7 +28,7 @@
 
     <groupId>com.github.pagehelper</groupId>
     <artifactId>pagehelper</artifactId>
-    <version>4.2.1</version>
+    <version>4.2.1-footStone</version>
     <packaging>jar</packaging>
 
     <name>pagehelper 5</name>
@@ -44,8 +44,8 @@
 
     <developers>
         <developer>
-            <name>abel533</name>
-            <email>abel533@gmail.com</email>
+            <name>shijl</name>
+            <email>shijl@olymtech.com</email>
         </developer>
     </developers>
 
@@ -98,18 +98,12 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.hsqldb</groupId>
-            <artifactId>hsqldb</artifactId>
-            <version>2.2.9</version>
-            <scope>test</scope>
-        </dependency>
-        <!--
-        <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
             <version>5.1.29</version>
             <scope>test</scope>
         </dependency>
+        <!--
         <dependency>
             <groupId>com.oracle</groupId>
             <artifactId>ojdbc14</artifactId>

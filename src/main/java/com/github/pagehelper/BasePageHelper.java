@@ -134,7 +134,7 @@ public abstract class BasePageHelper {
      * @return 分页数
      */
     public static <E> Page<E> footStonePage(int page, int pageSize, boolean footStone, boolean count) {
-        Page<E> pageObject = new Page<E>(new int[]{page, pageSize}, count);
+        Page<E> pageObject = new Page<>(page, pageSize, count);
         pageObject.setFootStoneQuery(footStone);
         //当已经执行过orderBy的时候
         Page<E> oldPage = SqlUtil.getLocalPage();
