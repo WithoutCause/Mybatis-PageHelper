@@ -47,6 +47,9 @@ public abstract class AbstractDialect implements Dialect, Constant {
     @Override
     public boolean beforeCount(MappedStatement ms, Object parameterObject, RowBounds rowBounds) {
         Page page = SqlUtil.getLocalPage();
+        if (page.isFootStoneQuery()) {
+            return page.getPages() == -1;
+        }
         return !page.isOrderByOnly() && page.isCount();
     }
 
@@ -164,6 +167,10 @@ public abstract class AbstractDialect implements Dialect, Constant {
         if (page == null) {
             return pageList;
         }
+        if (page.isFootStoneQuery()) {
+            // 走基石的组装逻辑
+            footStonePage(pageList, page);
+        }
         page.addAll(pageList);
         if (!page.isCount()) {
             page.setTotal(-1);
@@ -173,6 +180,13 @@ public abstract class AbstractDialect implements Dialect, Constant {
             page.setTotal(pageList.size());
         }
         return page;
+    }
+
+    private void footStonePage(List pageList, Page page) {
+        if (pageList.size() > page.getPageSize()) {
+            page.setHasNextPage(true);
+        }
+        pageList.remove(pageList.size() - 1);
     }
 
     @Override

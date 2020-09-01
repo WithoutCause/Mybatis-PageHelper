@@ -115,6 +115,7 @@ public class PageInfo<T> implements Serializable {
             this.list = page;
             this.size = page.size();
             this.total = page.getTotal();
+            this.hasNextPage = page.isHasNextPage();
             //由于结果是>startRow的，所以实际的需要+1
             if (this.size == 0) {
                 this.startRow = 0;
@@ -202,6 +203,10 @@ public class PageInfo<T> implements Serializable {
      * 判定页面边界
      */
     private void judgePageBoudary() {
+        // hasNextPage 已经被赋值了，就不触发重新计算
+        if (hasNextPage) {
+            return;
+        }
         isFirstPage = pageNum == 1;
         isLastPage = pageNum == pages;
         hasPreviousPage = pageNum > 1;

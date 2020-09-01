@@ -86,6 +86,19 @@ public class Page<E> extends ArrayList<E> {
      */
     private Boolean pageSizeZero;
 
+    /**
+     * 是否基石查询, 默认为 true, 即基石查询。
+     * 基石查询特点: 传入两个参数, page 和 pageSize
+     * 1. 不查询总条数
+     * 2. 每次查询在 pageSize 基础上加1，以判断是否有下一页
+     * 3. 查询尾页传入的 page 是 -1
+     */
+    private boolean footStoneQuery = true;
+    /**
+     *  是否有下一页
+     */
+    private boolean hasNextPage;
+
     public Page() {
         super();
     }
@@ -228,6 +241,22 @@ public class Page<E> extends ArrayList<E> {
             this.pageSizeZero = pageSizeZero;
         }
         return this;
+    }
+
+    public boolean isFootStoneQuery() {
+        return footStoneQuery;
+    }
+
+    public void setFootStoneQuery(boolean footStoneQuery) {
+        this.footStoneQuery = footStoneQuery;
+    }
+
+    public boolean isHasNextPage() {
+        return hasNextPage;
+    }
+
+    public void setHasNextPage(boolean hasNextPage) {
+        this.hasNextPage = hasNextPage;
     }
 
     /**

@@ -263,6 +263,7 @@ public class SqlUtil extends BaseSqlUtil implements Constant {
         }
     }
 
+    @Override
     public void setProperties(Properties properties) {
         super.setProperties(properties);
         //多数据源时，获取jdbcurl后是否关闭数据源
