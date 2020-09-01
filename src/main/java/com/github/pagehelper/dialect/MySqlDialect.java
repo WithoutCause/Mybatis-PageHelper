@@ -25,7 +25,8 @@ public class MySqlDialect extends AbstractDialect {
     @Override
     public Object processPageParameter(MappedStatement ms, Map<String, Object> paramMap, Page page, BoundSql boundSql, CacheKey pageKey) {
         if (page.isFootStoneQuery()) {
-            paramMap.put(PAGEPARAMETER_FIRST, page.getStartRow());
+            // 如果传入的 pageNum = -1, 直接查最后一页. limit + 1，用于判断是否存在下一页
+            paramMap.put(PAGEPARAMETER_FIRST, getOffset(page));
             paramMap.put(PAGEPARAMETER_SECOND, page.getPageSize() + 1);
         } else {
             paramMap.put(PAGEPARAMETER_FIRST, page.getStartRow());
@@ -46,6 +47,29 @@ public class MySqlDialect extends AbstractDialect {
             metaObject.setValue("parameterMappings", newParameterMappings);
         }
         return paramMap;
+    }
+
+    private int getOffset(Page page) {
+        int pageSize = page.getPageSize();
+        int pageNum = page.getPageNum();
+        int total = (int) page.getTotal();
+
+        if (pageNum == -1 && page.getTotal() != 0) {
+            int pages = getPages(total, pageSize);
+            return (pages - 1) * pageSize;
+        }
+
+        int queryNum = Math.max((pageNum - 1), 0);
+        return queryNum * pageSize;
+    }
+
+    private int getPages(int total, int pageSize) {
+        int pages = total / pageSize;
+        int lastPageSize = total % pageSize;
+        if (lastPageSize > 0) {
+            pages += 1;
+        }
+        return pages;
     }
 
     @Override

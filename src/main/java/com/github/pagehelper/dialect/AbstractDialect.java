@@ -191,9 +191,11 @@ public abstract class AbstractDialect implements Dialect, Constant {
         int pageSize = page.getPageSize();
         if (pageList.size() > pageSize) {
             page.setHasNextPage(true);
+        } else {
+            page.setHasNextPage(false);
         }
-        // 直接查询最后一页
-        if (page.getPageNum() == -1) {
+        // 查询最后一页
+        if (page.getPageNum() == -1 || !page.isHasNextPage()) {
             int total = (int) page.getTotal();
             page.setPages(getPages(total, pageSize));
             page.setPageNum(getPages(total, pageSize));
