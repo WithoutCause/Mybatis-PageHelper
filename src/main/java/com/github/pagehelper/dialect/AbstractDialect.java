@@ -48,7 +48,9 @@ public abstract class AbstractDialect implements Dialect, Constant {
     public boolean beforeCount(MappedStatement ms, Object parameterObject, RowBounds rowBounds) {
         Page page = SqlUtil.getLocalPage();
         if (page.isFootStoneQuery()) {
-            return page.getPages() == -1;
+            // 基石查询，直接查询最后一页，pageNum 为 -1, 需要查询总条数
+            page.setCount(true);
+            return page.getPageNum() == -1;
         }
         return !page.isOrderByOnly() && page.isCount();
     }
@@ -125,6 +127,9 @@ public abstract class AbstractDialect implements Dialect, Constant {
     @Override
     public boolean beforePage(MappedStatement ms, Object parameterObject, RowBounds rowBounds) {
         Page page = SqlUtil.getLocalPage();
+        if (page.isFootStoneQuery()) {
+            return true;
+        }
         if (page.isOrderByOnly()) {
             return true;
         }
@@ -183,10 +188,26 @@ public abstract class AbstractDialect implements Dialect, Constant {
     }
 
     private void footStonePage(List pageList, Page page) {
-        if (pageList.size() > page.getPageSize()) {
+        int pageSize = page.getPageSize();
+        if (pageList.size() > pageSize) {
             page.setHasNextPage(true);
         }
+        // 直接查询最后一页
+        if (page.getPageNum() == -1) {
+            int total = (int) page.getTotal();
+            page.setPages(getPages(total, pageSize));
+            page.setPageNum(getPages(total, pageSize));
+        }
         pageList.remove(pageList.size() - 1);
+    }
+
+    private int getPages(Integer count, int pageSize) {
+        int pages = count / pageSize;
+        int lastPageSize = count % pageSize;
+        if (lastPageSize > 0) {
+            pages += 1;
+        }
+        return pages;
     }
 
     @Override
