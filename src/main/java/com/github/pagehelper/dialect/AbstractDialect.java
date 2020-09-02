@@ -189,18 +189,25 @@ public abstract class AbstractDialect implements Dialect, Constant {
 
     private void footStonePage(List pageList, Page page) {
         int pageSize = page.getPageSize();
+        int pages = page.getPages();
         if (pageList.size() > pageSize) {
             page.setHasNextPage(true);
+            pageList.remove(pageList.size() - 1);
         } else {
             page.setHasNextPage(false);
         }
         // 查询最后一页
-        if (page.getPageNum() == -1 || !page.isHasNextPage()) {
+        if (page.getPageNum() == -1) {
             int total = (int) page.getTotal();
             page.setPages(getPages(total, pageSize));
             page.setPageNum(getPages(total, pageSize));
+        } else if (!page.isHasNextPage()){
+            int total = (pages - 1) * pageSize + pageList.size();
+            page.setTotal(total);
+            page.setPages(getPages(total, pageSize));
+            page.setPageNum(getPages(total, pageSize));
         }
-        pageList.remove(pageList.size() - 1);
+
     }
 
     private int getPages(Integer count, int pageSize) {
