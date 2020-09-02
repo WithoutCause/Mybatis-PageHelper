@@ -126,23 +126,25 @@ public abstract class BasePageHelper {
 
     /**
      *
-     * @param page 页码
+     * @param pageNum 页码
      * @param pageSize 每页数量
      * @param footStone 是否基石
      * @param count 是否查询总条数
      * @param <E> 泛型
      * @return 分页数
      */
-    public static <E> Page<E> footStonePage(int page, int pageSize, boolean footStone, boolean count) {
-        Page<E> pageObject = new Page<E>(page, pageSize, count);
-        pageObject.setFootStoneQuery(footStone);
+    public static <E> Page<E> footStonePage(int pageNum, int pageSize, boolean footStone, boolean count) {
+        Page<E> page = new Page<E>(pageNum, pageSize, count);
+        page.setFootStoneQuery(footStone);
+        // 基石查询中不能开启分页合理化
+        page.setReasonable(Boolean.FALSE);
         //当已经执行过orderBy的时候
         Page<E> oldPage = SqlUtil.getLocalPage();
         if (oldPage != null && oldPage.isOrderByOnly()) {
-            pageObject.setOrderBy(oldPage.getOrderBy());
+            page.setOrderBy(oldPage.getOrderBy());
         }
-        SqlUtil.setLocalPage(pageObject);
-        return pageObject;
+        SqlUtil.setLocalPage(page);
+        return page;
     }
 
     /**
